@@ -1,5 +1,5 @@
 from presso.core.abstract.alpha import AbstractAlpha
-from presso.dataevent.history.coinbase import CoinbaseHistory
+from presso.dataevent.coinbase_history import CoinbaseHistory
 
 
 class PrinterAlpha(AbstractAlpha):
