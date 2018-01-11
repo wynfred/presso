@@ -25,13 +25,13 @@ class AbstractDataEvent:
     def sendData(self, data):
         self._saveHistory(data)
         tasks = [alpha.onData(data) for alpha in self._alphas]
-        return asyncio.gather(tasks)
+        return asyncio.gather(*tasks)
 
     def _saveHistory(self, data):
-        if self._history:
-            numpy.vstack([self._history, data])
-        else:
+        if self._history is None:
             self._history = data
+        else:
+            numpy.vstack([self._history, data])
 
     async def _start(self):
         event_queue = EventQueue.getInstance()

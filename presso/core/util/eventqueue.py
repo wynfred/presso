@@ -11,7 +11,7 @@ class EventQueue:
         self.__queue = PriorityQueue()
 
     async def consume(self):
-        caller, data = await self.__queue.get()
+        _, caller, data = await self.__queue.get()
         wait_for(caller.sendData(data), MAX_TIMEOUT)
         self.__locker[caller].release()
 
@@ -19,7 +19,7 @@ class EventQueue:
         if caller not in self.__locker:
             self.__locker[caller] = Lock()
             await self.__locker[caller].acquire()
-        self.__queue.put_nowait((data[0], (caller, data)))
+        self.__queue.put_nowait((data[0], caller, data))
         await self.__locker[caller].acquire()
 
     def remove(self, caller):
@@ -27,7 +27,6 @@ class EventQueue:
 
     @staticmethod
     def getInstance():
-        if EventQueue.__queue:
-            return EventQueue.__queue
-        else:
+        if not EventQueue.__queue:
             EventQueue.__queue = EventQueue()
+        return EventQueue.__queue

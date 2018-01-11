@@ -24,6 +24,7 @@ class AbstractPortfolio:
         loop.add_reader(sys.stdin, loop.stop)
         event_queue = EventQueue.getInstance()
         async def main():
+            # Let DataEvent to run first
             await asyncio.sleep(1)
             while True:
                 await event_queue.consume()
