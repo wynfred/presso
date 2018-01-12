@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-DATA_ROOT_PATH = 'data'
+DATA_ROOT_PATH = 'data/history'
 
 MAX_TIMEOUT = 1
 
