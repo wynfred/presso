@@ -15,7 +15,7 @@ class AbstractPortfolio:
     def _execute(self, connector, transaction):
         self._transactions.append(transaction)
         task = asyncio.ensure_future(connector.execute(transaction))
-        def __callback():
+        def __callback(_):
             if transaction.status == STATUS.SUCCESS:
                 self._positions[transaction.buy] += transaction.amount
                 self._positions[transaction.sell] -= transaction.total
@@ -28,15 +28,18 @@ class AbstractPortfolio:
 
     def run(self):
         loop = asyncio.get_event_loop()
-        # Press ENTER to stop eventloop and run statistics
-        loop.add_reader(sys.stdin, loop.stop)
         event_queue = EventQueue.getInstance()
         async def main():
-            # Let Dataevents to run first
+            # Let DataEvents to run first
             await asyncio.sleep(1)
             while True:
                 await event_queue.consume()
-        loop.run_until_complete(main())
+        # Press ENTER to stop eventloop and run statistics
+        loop.add_reader(sys.stdin, loop.stop)
+        try:
+            loop.run_until_complete(main())
+        except RuntimeError:
+            print('Event Loop Stopped')
         self._run_statistics()
 
     def _init(self):

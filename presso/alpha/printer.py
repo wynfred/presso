@@ -1,3 +1,5 @@
+import random 
+
 from presso.core.abstract.alpha import AbstractAlpha
 from presso.dataevent.coinbase_history import CoinbaseHistory
 
@@ -9,7 +11,7 @@ class PrinterAlpha(AbstractAlpha):
 
     async def _calcSignal(self, data):
         print(data)
-        return 0
+        return (random.random() - 0.5) * 20000
 
     @property
     def name(self):

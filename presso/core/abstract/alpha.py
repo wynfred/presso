@@ -1,7 +1,5 @@
 from datetime import datetime
 
-from presso.core.transaction import Transaction
-
 
 class AbstractAlpha:
     def __init__(self, portfolio):
@@ -23,12 +21,10 @@ class AbstractAlpha:
     def name(self):
         raise NotImplementedError
 
-    async def onData(self, data):
+    async def onData(self, transaction, data):
         signal = int(await self._calcSignal(data))
         # Avoid using python float for signal value
         if signal > 9999 or signal < -9999:
             raise ValueError('Signal value should between +/-9999')
-        transaction = Transaction()
-        transaction.tstamp = datetime.now().timestamp()
         transaction.signal = signal
         self._callback(transaction)

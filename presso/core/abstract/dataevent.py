@@ -2,6 +2,7 @@ import asyncio
 
 import numpy
 
+from presso.core.transaction import Transaction
 from presso.core.util.eventqueue import EventQueue
 
 
@@ -24,7 +25,9 @@ class AbstractDataEvent:
 
     def sendData(self, data):
         self._saveHistory(data)
-        tasks = [alpha.onData(data) for alpha in self._alphas]
+        transaction = Transaction()
+        transaction.tstamp = data[0]
+        tasks = [alpha.onData(transaction, data) for alpha in self._alphas]
         return asyncio.gather(*tasks)
 
     def _saveHistory(self, data):
