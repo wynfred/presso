@@ -1,0 +1,58 @@
+#!/usr/bin/python3
+import asyncio
+import json
+import sys
+
+from pydoc import locate
+
+from presso.core.util.eventqueue import EventQueue
+
+
+
+if __name__ == '__main__':
+    manifest = json.load(open(sys.argv[1]))
+    # Load dataevents
+    dataevents = {}
+    for name, info in manifest['dataevents'].items():
+        module = locate(info['module'])
+        dataevents[name] = module(info['data_path'], info['config'])
+    # Load connectors
+    connectors = {}
+    for connector in manifest['connectors']:
+        module = locate(connector['module'])(
+            {name: dataevents[name] for name in connector['dataevents']},
+            connector['config']
+        )
+        connectors[connector['name']] = module
+    # Load statistics
+    statistics = []
+    for stat in manifest['statistics']:
+        module = locate(stat['module'])(stat['config'])
+        statistics.append(module)
+    # Load portfolio
+    portfolio = locate(manifest['module'])(connectors, statistics, manifest['config'])
+    # Load alphas
+    for alpha in manifest['alphas']:
+        module = locate(alpha['module'])(
+            portfolio,
+            dataevents[alpha['main_dataevent']],
+            {name: dataevents[name] for name in alpha['dataevents']},
+            alpha['config']
+        )
+        dataevents[alpha['main_dataevent']].addAlpha(module)
+
+    # Start portfolio
+    loop = asyncio.get_event_loop()
+    event_queue = EventQueue.getInstance()
+    async def main():
+        # Let DataEvents to run first
+        await asyncio.sleep(1)
+        while True:
+            await event_queue.consume()
+    # Press ENTER to stop eventloop and run statistics
+    loop.add_reader(sys.stdin, loop.stop)
+    try:
+        loop.run_until_complete(main())
+    except RuntimeError:
+        print('Event Loop Stopped')
+    portfolio.runStatistics()

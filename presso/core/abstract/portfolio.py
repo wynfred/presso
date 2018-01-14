@@ -1,14 +1,14 @@
 import asyncio
-import sys
 
 from presso.core.util.constants import STATUS
-from presso.core.util.eventqueue import EventQueue
 
 
 class AbstractPortfolio:
-    def __init__(self):
+    def __init__(self, connectors, statistics, config):
+        self._connectors = connectors
+        self._statistics = statistics
+        self._config = config
         self._transactions = []
-        self._statistics = []
         self._positions = {}
         self._init()
 
@@ -22,25 +22,10 @@ class AbstractPortfolio:
                 transaction.portfolio = self._positions.copy()
         task.add_done_callback(__callback)
 
-    def _run_statistics(self):
-        for stat in self._statistics:
-            stat.run(self._transactions)
-
-    def run(self):
-        loop = asyncio.get_event_loop()
-        event_queue = EventQueue.getInstance()
-        async def main():
-            # Let DataEvents to run first
-            await asyncio.sleep(1)
-            while True:
-                await event_queue.consume()
-        # Press ENTER to stop eventloop and run statistics
-        loop.add_reader(sys.stdin, loop.stop)
-        try:
-            loop.run_until_complete(main())
-        except RuntimeError:
-            print('Event Loop Stopped')
-        self._run_statistics()
+    def runStatistics(self):
+        for transaction in self._transactions:
+            for stat in self._statistics:
+                stat.onTransaction(transaction)
 
     def _init(self):
         raise NotImplementedError

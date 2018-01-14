@@ -1,0 +1,34 @@
+{
+    "portfolio_name": "Simple",
+    "module": "presso.portfolio.simple.SimplePortfolio",
+    "dataevents": {
+        "coinbase_history": {
+            "module": "presso.dataevent.coinbase_history.CoinbaseHistory",
+            "data_path": "data/history/coinbaseUSD_1-min_data_2017-10-20.csv",
+            "config": {}
+        }
+    },
+    "alphas": [
+        {
+            "module": "presso.alpha.printer.PrinterAlpha",
+            "main_dataevent": "coinbase_history",
+            "dataevents":[],
+            "config": {}
+        }
+    ],
+    "connectors": [
+        {
+            "name": "coinbase_history",
+            "module": "presso.connector.coinbase_history.CoinbaseHistory",
+            "dataevents": ["coinbase_history"],
+            "config": {}
+        }
+    ],
+    "statistics": [
+        {
+            "module": "presso.statistics.printer.PrinterStatistics",
+            "config": {}
+        }
+    ],
+    "config": {}
+}

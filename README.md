@@ -1,4 +1,5 @@
 # presso
+Event-driven backtest/realtime quantitative trading system for cryptocurrencies.
 
 ## Architecture
 ![Pipeline](data/image/architecture.png)
@@ -9,7 +10,7 @@
     numpy
 
 ## Run
-    python3 your_portfolio.py
+    ./presso_run manifest.json
 
 ## Examples
 
@@ -38,9 +39,7 @@ from presso.core.abstract.dataevent import AbstractDataEvent
 
 
 class ExampleDataEvent(AbstractDataEvent):
-    _instance = None
-
-    def __init__(self):
+    def _init(self):
         # TODO
         pass
 
@@ -67,10 +66,7 @@ class ExamplePortfolio(AbstractPortfolio):
             transaction.buy = TICKER.BTC
             transaction.sell = TICKER.USD
             transaction.amount = 10
-        self._execute(self.__coinbase, transaction)
-
-
-ExamplePortfolio().run()
+        self._execute(self._connectors['coinbase_history'], transaction)
 ```
 
 ### Connector
@@ -79,9 +75,7 @@ from presso.core.abstract.connector import AbstractConnector
 
 
 class ExampleConnector(AbstractConnector):
-    _instance = None
-
-    def __init__(self):
+    def _init(self):
         # TODO
         pass
 
@@ -96,8 +90,11 @@ from presso.core.abstract.statistics import AbstractStatistics
 
 
 class ExampleStatistics(AbstractStatistics):
-    def run(self, transactions):
-        for trans in transactions:
-            # TODO
-            pass
+    def _init(self):
+        # TODO
+        pass
+
+    def onTransaction(self, transaction):
+        # TODO
+        pass
 ```

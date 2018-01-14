@@ -1,8 +1,6 @@
 from enum import Enum
 
 
-DATA_ROOT_PATH = 'data/history'
-
 MAX_TIMEOUT = 1
 
 STATUS = Enum('STATUS', ('SUCCESS', 'FAIL'))

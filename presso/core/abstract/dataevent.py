@@ -7,21 +7,19 @@ from presso.core.util.eventqueue import EventQueue
 
 
 class AbstractDataEvent:
+    def __init__(self, datapath, config):
+        self._datapath = datapath
+        self._config = config
+        self._alphas = set()
+        self._history = None
+        asyncio.ensure_future(self._start())
+        self._init()
+
     def addAlpha(self, alpha):
         self._alphas.add(alpha)
 
     def getHistory(self, num=0):
         return self._history[-num:]
-
-    @classmethod
-    def getInstance(cls):
-        if not cls._instance:
-            inst = cls()
-            inst._alphas = set()
-            inst._history = None
-            asyncio.ensure_future(inst._start())
-            cls._instance = inst
-        return cls._instance
 
     def sendData(self, data):
         self._saveHistory(data)
@@ -42,6 +40,9 @@ class AbstractDataEvent:
             # Wait for previous event to be consumed
             await event_queue.put(self, data)
         event_queue.remove(self)
+
+    def _init(self):
+        raise NotImplementedError
 
     async def _iter(self):
         raise NotImplementedError

@@ -2,7 +2,10 @@ from datetime import datetime
 
 
 class AbstractAlpha:
-    def __init__(self, portfolio):
+    def __init__(self, portfolio, main_dataevent, dataevents, config):
+        self._main_dataevent = main_dataevent
+        self._dataevents = dataevents
+        self._config = config
         # Check if portfolio has handler function
         callback_name = 'on%sSignal' % self.name
         if hasattr(portfolio, callback_name):
@@ -22,9 +25,8 @@ class AbstractAlpha:
         raise NotImplementedError
 
     async def onData(self, transaction, data):
-        signal = int(await self._calcSignal(data))
-        # Avoid using python float for signal value
-        if signal > 9999 or signal < -9999:
-            raise ValueError('Signal value should between +/-9999')
+        signal = await self._calcSignal(data)
+        if signal > 1 or signal < -1:
+            raise ValueError('Signal value should between +/-1')
         transaction.signal = signal
         self._callback(transaction)

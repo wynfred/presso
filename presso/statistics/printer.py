@@ -2,6 +2,8 @@ from presso.core.abstract.statistics import AbstractStatistics
 
 
 class PrinterStatistics(AbstractStatistics):
-    def run(self, transactions):
-        for trans in transactions:
-            print(trans)
+    def _init(self):
+        pass
+
+    def onTransaction(self, transaction):
+        print(transaction)
