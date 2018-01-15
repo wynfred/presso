@@ -1,6 +1,7 @@
 import random 
 
 from presso.core.abstract.alpha import AbstractAlpha
+from presso.core.util import LOG
 
 
 class PrinterAlpha(AbstractAlpha):

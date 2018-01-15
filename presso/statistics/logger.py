@@ -1,9 +1,10 @@
 from presso.core.abstract.statistics import AbstractStatistics
+from presso.core.util import LOG
 
 
-class PrinterStatistics(AbstractStatistics):
+class LoggerStatistics(AbstractStatistics):
     def _init(self):
         pass
 
     def onTransaction(self, transaction):
-        print(transaction)
+        LOG.info(transaction)

@@ -1,6 +1,10 @@
 {
     "portfolio_name": "Simple",
     "module": "presso.portfolio.simple.SimplePortfolio",
+    "log":{
+        "level": "info",
+        "file": "presso.log"
+    },
     "dataevents": {
         "coinbase_history": {
             "module": "presso.dataevent.coinbase_history.CoinbaseHistory",
@@ -26,7 +30,7 @@
     ],
     "statistics": [
         {
-            "module": "presso.statistics.printer.PrinterStatistics",
+            "module": "presso.statistics.logger.LoggerStatistics",
             "config": {}
         }
     ],

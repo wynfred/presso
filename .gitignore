@@ -102,3 +102,7 @@ ENV/
 
 # mac
 .DS_Store
+
+#presso
+presso.log
+data/history/*

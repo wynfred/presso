@@ -1,16 +1,25 @@
 #!/usr/bin/python3
 import asyncio
 import json
+import logging
 import sys
 
 from pydoc import locate
 
+from presso.core.util import LOG
 from presso.core.util.eventqueue import EventQueue
 
 
 
 if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        print('Usage: presso_run manifest.json')
+        exit()
     manifest = json.load(open(sys.argv[1]))
+    # Setup logger
+    log_format = '[%(levelname)s|%(module)s|%(asctime)s] %(message)s'
+    log_level = getattr(logging, manifest['log']['level'].upper(), None)
+    logging.basicConfig(filename=manifest['log']['file'], format=log_format, level=log_level)
     # Load dataevents
     dataevents = {}
     for name, info in manifest['dataevents'].items():
@@ -54,5 +63,5 @@ if __name__ == '__main__':
     try:
         loop.run_until_complete(main())
     except RuntimeError:
-        print('Event Loop Stopped')
+        LOG.info('Event Loop Stopped')
     portfolio.runStatistics()
