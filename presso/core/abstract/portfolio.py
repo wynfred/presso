@@ -26,6 +26,8 @@ class AbstractPortfolio:
         for transaction in self._transactions:
             for stat in self._statistics:
                 stat.onTransaction(transaction)
+        for stat in self._statistics:
+            stat.finish()
 
     def _init(self):
         raise NotImplementedError

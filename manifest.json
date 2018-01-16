@@ -6,8 +6,8 @@
         "file": "presso.log"
     },
     "dataevents": {
-        "coinbase_history": {
-            "module": "presso.dataevent.coinbase_history.CoinbaseHistory",
+        "csv_kline": {
+            "module": "presso.dataevent.csv_kline.CsvKlineDataEvent",
             "data_path": "data/history/coinbaseUSD_1-min_data_2017-10-20.csv",
             "config": {}
         }
@@ -15,16 +15,16 @@
     "alphas": [
         {
             "module": "presso.alpha.printer.PrinterAlpha",
-            "main_dataevent": "coinbase_history",
+            "main_dataevent": "csv_kline",
             "dataevents":[],
             "config": {}
         }
     ],
     "connectors": [
         {
-            "name": "coinbase_history",
-            "module": "presso.connector.coinbase_history.CoinbaseHistory",
-            "dataevents": ["coinbase_history"],
+            "name": "kline_history",
+            "module": "presso.connector.kline_history.KlineHistoryConnector",
+            "dataevents": ["csv_kline"],
             "config": {}
         }
     ],

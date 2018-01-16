@@ -8,3 +8,6 @@ class LoggerStatistics(AbstractStatistics):
 
     def onTransaction(self, transaction):
         LOG.info(transaction)
+
+    def finish(self):
+        pass

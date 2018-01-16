@@ -8,3 +8,6 @@ class AbstractStatistics:
 
     def onTransaction(self, transaction):
         raise NotImplementedError
+
+    def finish(self):
+        raise NotImplementedError

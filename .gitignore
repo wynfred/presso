@@ -103,6 +103,9 @@ ENV/
 # mac
 .DS_Store
 
+# vim
+*.un~
+
 #presso
 presso.log
 data/history/*

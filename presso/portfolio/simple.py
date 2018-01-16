@@ -8,13 +8,14 @@ class SimplePortfolio(AbstractPortfolio):
         self._positions[TICKER.BTC] = 0
 
     def onPrinterSignal(self, transaction):
-        transaction.operation = OPERATION.MARKET
-        if transaction.signal > 0:
+        if transaction.signal > 0 and self._positions[TICKER.USD] > 0:
             transaction.buy = TICKER.BTC
             transaction.sell = TICKER.USD
-            transaction.amount = 10
-        else:
+            transaction.total = self._positions[TICKER.USD] * 0.5
+            transaction.operation = OPERATION.MARKET
+        elif transaction.signal < 0 and self._positions[TICKER.BTC] > 0:
             transaction.buy = TICKER.USD
             transaction.sell = TICKER.BTC
-            transaction.amount = 10000
-        self._execute(self._connectors['coinbase_history'], transaction)
+            transaction.total = self._positions[TICKER.BTC] * 0.5
+            transaction.operation = OPERATION.MARKET
+        self._execute(self._connectors['kline_history'], transaction)

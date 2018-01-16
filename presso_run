@@ -6,8 +6,8 @@ import sys
 
 from pydoc import locate
 
+from presso.core.eventqueue import EventQueue
 from presso.core.util import LOG
-from presso.core.util.eventqueue import EventQueue
 
 
 

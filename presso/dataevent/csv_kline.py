@@ -3,7 +3,7 @@ import numpy
 from presso.core.abstract.dataevent import AbstractDataEvent
 
 
-class CoinbaseHistory(AbstractDataEvent):
+class CsvKlineDataEvent(AbstractDataEvent):
     def _init(self):
         self.__data = numpy.loadtxt(self._datapath, delimiter=',')
 

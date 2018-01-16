@@ -2,8 +2,8 @@ import asyncio
 
 import numpy
 
+from presso.core.eventqueue import EventQueue
 from presso.core.transaction import Transaction
-from presso.core.util.eventqueue import EventQueue
 
 
 class AbstractDataEvent:
@@ -30,9 +30,9 @@ class AbstractDataEvent:
 
     def _saveHistory(self, data):
         if self._history is None:
-            self._history = data
+            self._history = [data]
         else:
-            numpy.vstack([self._history, data])
+            self._history = numpy.vstack([self._history, data])
 
     async def _start(self):
         event_queue = EventQueue.getInstance()

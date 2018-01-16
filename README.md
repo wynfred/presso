@@ -60,13 +60,13 @@ class ExamplePortfolio(AbstractPortfolio):
         self._positions[TICKER.BTC] = 0
 
     def onExampleSignal(self, transaction):
-        if transaction.signal > 0:
-            # TODO
-            transaction.operation = OPERATION.MARKET
+        # TODO
+        if transaction.signal > 0 and self._positions[TICKER.USD] > 0:
             transaction.buy = TICKER.BTC
             transaction.sell = TICKER.USD
-            transaction.amount = 10
-        self._execute(self._connectors['coinbase_history'], transaction)
+            transaction.total = self._positions[TICKER.USD] * 0.5
+            transaction.operation = OPERATION.MARKET
+        self._execute(self._connectors['kline_history'], transaction)
 ```
 
 ### Connector
@@ -95,6 +95,10 @@ class ExampleStatistics(AbstractStatistics):
         pass
 
     def onTransaction(self, transaction):
+        # TODO
+        pass
+
+    def finish(self):
         # TODO
         pass
 ```
