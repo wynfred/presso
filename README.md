@@ -1,8 +1,42 @@
 # presso
-Event-driven backtest/realtime quantitative trading system for cryptocurrencies.
+Event-driven backtest/realtime quantitative trading system.
 
 ## Architecture
 ![Pipeline](data/image/architecture.png)
+
+### DataEvent
+- *Raw Data -> DataEvent*
+
+DataEvents process raw data and generate events. Raw data can be news, history price, market data, etc. A DataEvent is a numpy array and its first value must be a timestamp. It will be put into a priority queue with the timestamp so all history events for backtesting are ordered by time.
+
+### Alpha
+- *DataEvent -> Signal (A value from -1 to 1)*
+
+Alphas represent trading strategies. An Alpha subscribes to a `main_dataevent` and has access to other DataEvents. It is triggered when its `main_dataevent` sends out a new data event. It processes data and calculates a signal which is sent to a handler in Portfolio.
+
+### Portfolio
+- *Signals -> Transactions*
+
+Portfolio is a combination of Alphas. It opens orders according to the signals received, and then sends them to Connectors. It also holds current positions and a list of Transactions.
+
+### Connector
+- *Transaction -> Execute*
+
+Connectors are order executors. A Connector could be an API wrapper of an exchange or a simulator using history data.
+
+### Statistics
+- *Transactions -> Statistics*
+
+Statistics are triggered at the end of program. They will collect information from Transactions and save data, generate visual charts, calculate ratios, etc.
+
+#### Transaction
+Transactions are records that store information through the pipeline. A Transaction is filled by different modules and stored in Portfolio. 
+
+#### EventQueue
+EventQueue contains a priority queue and a locking system. DataEvents put events into the EventQueue and wait for its event to be consumed. There will be only one event in EventQueue for every DataEvent, so that all history events are triggered by time.
+
+#### Manifest
+Manifest is a JSON file that defines the structure of a Portfolio and dependencies of modules.
 
 ## Dependencies
     python3.6
