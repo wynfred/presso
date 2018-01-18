@@ -9,6 +9,7 @@
         "csv_kline": {
             "module": "presso.dataevent.csv_kline.CsvKlineDataEvent",
             "data_path": "data/history/coinbaseUSD_1-min_data_2017-10-20.csv",
+            "history_file": "",
             "config": {}
         }
     },

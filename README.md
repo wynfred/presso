@@ -45,6 +45,7 @@ Manifest is a JSON file that defines the structure of a Portfolio and dependenci
 
 ## Run
     ./presso_run manifest.json
+    # Press ENTER to stop DataEvents and run Statistics
 
 ## Examples
 

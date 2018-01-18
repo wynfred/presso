@@ -24,7 +24,7 @@ if __name__ == '__main__':
     dataevents = {}
     for name, info in manifest['dataevents'].items():
         module = locate(info['module'])
-        dataevents[name] = module(info['data_path'], info['config'])
+        dataevents[name] = module(info['data_path'], info['history_file'], info['config'])
     # Load connectors
     connectors = {}
     for connector in manifest['connectors']:
@@ -59,7 +59,12 @@ if __name__ == '__main__':
         while True:
             await event_queue.consume()
     # Press ENTER to stop eventloop and run statistics
-    loop.add_reader(sys.stdin, loop.stop)
+    def stop():
+        for dataevent in dataevents.values():
+            dataevent.shutdown()
+        asyncio.wait(asyncio.sleep(1))
+        loop.stop()
+    loop.add_reader(sys.stdin, stop)
     try:
         loop.run_until_complete(main())
     except RuntimeError:
