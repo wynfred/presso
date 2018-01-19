@@ -1,11 +1,23 @@
 {
     "portfolio_name": "Simple",
     "module": "presso.portfolio.simple.SimplePortfolio",
+    "realtime": false,
     "log":{
         "level": "info",
         "file": "presso.log"
     },
     "dataevents": {
+        "bitfinex_kline": {
+            "module": "presso.dataevent.bitfinex_kline.BitfinexKlineDataEvent",
+            "data_path": "https://api.bitfinex.com/v2/candles",
+            "history_file": "data/history/bitfinex_kline.npy",
+            "config": {
+                "time_frame": "1m",
+                "market": "BTCUSD",
+                "start_time": 1420088400,
+                "end_time": 1514782800
+            }
+        },
         "csv_kline": {
             "module": "presso.dataevent.csv_kline.CsvKlineDataEvent",
             "data_path": "data/history/coinbaseUSD_1-min_data_2017-10-20.csv",
@@ -16,7 +28,7 @@
     "alphas": [
         {
             "module": "presso.alpha.printer.PrinterAlpha",
-            "main_dataevent": "csv_kline",
+            "main_dataevent": "bitfinex_kline",
             "dataevents":[],
             "config": {}
         }
@@ -25,7 +37,7 @@
         {
             "name": "kline_history",
             "module": "presso.connector.kline_history.KlineHistoryConnector",
-            "dataevents": ["csv_kline"],
+            "dataevents": ["bitfinex_kline"],
             "config": {}
         }
     ],
