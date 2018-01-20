@@ -6,12 +6,11 @@ import sys
 
 from pydoc import locate
 
+from presso.core import util
 from presso.core.eventqueue import EventQueue
-from presso.core.util import LOG
 
 
-
-if __name__ == '__main__':
+def run():
     if len(sys.argv) != 2:
         print('Usage: presso_run manifest.json')
         exit()
@@ -24,7 +23,7 @@ if __name__ == '__main__':
     dataevents = {}
     for name, info in manifest['dataevents'].items():
         module = locate(info['module'])
-        dataevents[name] = module(info['data_path'], info['config'])
+        dataevents[name] = module(info['data_path'], info['history_file'], info['config'])
     # Load connectors
     connectors = {}
     for connector in manifest['connectors']:
@@ -40,6 +39,7 @@ if __name__ == '__main__':
         statistics.append(module)
     # Load portfolio
     portfolio = locate(manifest['module'])(connectors, statistics, manifest['config'])
+    util.IS_REALTIME = manifest['realtime']
     # Load alphas
     for alpha in manifest['alphas']:
         module = locate(alpha['module'])(
@@ -56,12 +56,23 @@ if __name__ == '__main__':
     async def main():
         # Let DataEvents to run first
         await asyncio.sleep(1)
-        while True:
-            await event_queue.consume()
+        await event_queue.consume()
     # Press ENTER to stop eventloop and run statistics
-    loop.add_reader(sys.stdin, loop.stop)
+    def stop():
+        for dataevent in dataevents.values():
+            dataevent.shutdown()
+        asyncio.wait(asyncio.sleep(1))
+        loop.stop()
+    loop.add_reader(sys.stdin, stop)
     try:
         loop.run_until_complete(main())
-    except RuntimeError:
-        LOG.info('Event Loop Stopped')
+    except RuntimeError as error:
+        if str(error) == 'Event loop stopped before Future completed.':
+            print('Event Loop Stopped')
+            util.LOG.info('Event Loop Stopped')
+        else:
+            util.LOG.error(error)
     portfolio.runStatistics()
+
+if __name__ == '__main__':
+    run()
