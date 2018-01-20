@@ -1,7 +1,7 @@
 {
     "portfolio_name": "Simple",
     "module": "presso.portfolio.simple.SimplePortfolio",
-    "realtime": false,
+    "realtime": true,
     "log":{
         "level": "info",
         "file": "presso.log"
