@@ -19,6 +19,8 @@ def run():
     log_format = '[%(levelname)s|%(module)s|%(asctime)s] %(message)s'
     log_level = getattr(logging, manifest['log']['level'].upper(), None)
     logging.basicConfig(filename=manifest['log']['file'], format=log_format, level=log_level)
+    # Set portfolio type
+    util.IS_REALTIME = manifest['realtime']
     # Load dataevents
     dataevents = {}
     for name, info in manifest['dataevents'].items():
@@ -39,7 +41,6 @@ def run():
         statistics.append(module)
     # Load portfolio
     portfolio = locate(manifest['module'])(connectors, statistics, manifest['config'])
-    util.IS_REALTIME = manifest['realtime']
     # Load alphas
     for alpha in manifest['alphas']:
         module = locate(alpha['module'])(
@@ -55,7 +56,7 @@ def run():
     event_queue = EventQueue.getInstance()
     async def main():
         # Let DataEvents to run first
-        await asyncio.sleep(1)
+        await asyncio.sleep(2)
         await event_queue.consume()
     # Press ENTER to stop eventloop and run statistics
     def stop():

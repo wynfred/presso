@@ -4,7 +4,7 @@ import json
 import numpy
 
 from presso.core.abstract.dataevent import AbstractDataEvent
-from presso.core.util import isRealtime, HttpSession, timeframeToSeconds
+from presso.core.util import HttpSession, isRealtime, LOG, timeframeToSeconds
 
 
 class BitfinexKlineDataEvent(AbstractDataEvent):
@@ -22,7 +22,7 @@ class BitfinexKlineDataEvent(AbstractDataEvent):
             self._iter = self.__history
 
     async def __history(self):
-        while self.__end_time > self.__now:
+        while self.__now <= self.__end_time:
             # Batch size of 100
             params = {'start': self.__now,
                       'end': self.__now + self.__timeframe * 100 - 1,
@@ -30,12 +30,18 @@ class BitfinexKlineDataEvent(AbstractDataEvent):
             async with HttpSession.get().get(self.__url,
                                              params=params,
                                              verify_ssl=False) as resp:
-                for tick in json.loads(await resp.text()):
-                    while self.__now != tick[0]:
-                        yield self.__parse([])
-                        self.__now += self.__timeframe
-                    yield self.__parse(tick)
-                    self.__now += self.__timeframe
+                text = await resp.text()
+                if self._history is None and text == '[]':
+                    LOG.error('Unable to use the current start_time')
+                for tick in json.loads(text):
+                    while self.__now <= self.__end_time:
+                        if self.__now != tick[0]:
+                            yield self.__parse([])
+                            self.__now += self.__timeframe
+                        else:
+                            yield self.__parse(tick)
+                            self.__now += self.__timeframe
+                            break
             # Server limit
             await asyncio.sleep(6)
 
