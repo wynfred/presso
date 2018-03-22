@@ -24,9 +24,9 @@ class AbstractPortfolio:
 
     def runStatistics(self):
         for transaction in self._transactions:
-            for stat in self._statistics:
+            for _, stat in self._statistics.items():
                 stat.onTransaction(transaction)
-        for stat in self._statistics:
+        for _, stat in self._statistics.items():
             stat.finish()
 
     def _init(self):

@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 import asyncio
-import json
 import logging
 import sys
+import toml
 
 from pydoc import locate
 
@@ -12,20 +12,26 @@ from presso.core.eventqueue import EventQueue
 
 def run():
     if len(sys.argv) != 2:
-        print('Usage: presso_run manifest.json')
+        print('Usage: presso_run manifest.toml')
         exit()
-    manifest = json.load(open(sys.argv[1]))
+    manifest = toml.load(open(sys.argv[1]))
     # Setup logger
     log_format = '[%(levelname)s|%(module)s|%(asctime)s] %(message)s'
     log_level = getattr(logging, manifest['log']['level'].upper(), None)
     logging.basicConfig(filename=manifest['log']['file'], format=log_format, level=log_level)
     # Set portfolio type
     util.IS_REALTIME = manifest['realtime']
+
     # Load dataevents
     dataevents = {}
-    for name, info in manifest['dataevents'].items():
-        module = locate(info['module'])
-        dataevents[name] = module(info['data_path'], info['history_file'], info['config'])
+    for dataevent in manifest['dataevents']:
+        module = locate(dataevent['module'])
+        dataevents[dataevent['name']] = module(
+            dataevent['data_path'],
+            dataevent['history_file'],
+            dataevent['config']
+        )
+
     # Load connectors
     connectors = {}
     for connector in manifest['connectors']:
@@ -34,16 +40,20 @@ def run():
             connector['config']
         )
         connectors[connector['name']] = module
+
     # Load statistics
-    statistics = []
+    statistics = {}
     for stat in manifest['statistics']:
         module = locate(stat['module'])(stat['config'])
-        statistics.append(module)
+        statistics[stat['name']] = module
+
     # Load portfolio
     portfolio = locate(manifest['module'])(connectors, statistics, manifest['config'])
+
     # Load alphas
     for alpha in manifest['alphas']:
         module = locate(alpha['module'])(
+            alpha['name'],
             portfolio,
             dataevents[alpha['main_dataevent']],
             {name: dataevents[name] for name in alpha['dataevents']},

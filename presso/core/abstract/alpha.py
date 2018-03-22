@@ -1,8 +1,6 @@
-from datetime import datetime
-
-
 class AbstractAlpha:
-    def __init__(self, portfolio, main_dataevent, dataevents, config):
+    def __init__(self, name, portfolio, main_dataevent, dataevents, config):
+        self.name = name
         self._main_dataevent = main_dataevent
         self._dataevents = dataevents
         self._config = config
@@ -18,10 +16,6 @@ class AbstractAlpha:
         raise NotImplementedError
 
     async def _calcSignal(self, data):
-        raise NotImplementedError
-
-    @property
-    def name(self):
         raise NotImplementedError
 
     async def onData(self, transaction, data):
