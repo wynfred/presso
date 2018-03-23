@@ -15,11 +15,14 @@ class BitfinexKlineDataEvent(AbstractDataEvent):
         # Bitfinex uses microseconds instead of seconds
         self.__timeframe = timeframeToSeconds(self._config['time_frame']) * 1000
         if isRealtime():
-            self._iter = self.__realtime
+            self.__iter_function = self.__realtime
         else:
             self.__now = self._config['start_time'] * 1000 // self.__timeframe * self.__timeframe
             self.__end_time = self._config['end_time'] * 1000 // self.__timeframe * self.__timeframe
-            self._iter = self.__history
+            self.__iter_function = self.__history
+
+    async def _iter(self):
+        await self.__iter_function()
 
     async def __history(self):
         while self.__now <= self.__end_time:

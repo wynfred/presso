@@ -1,5 +1,7 @@
 import asyncio
 
+from abc import ABC, abstractmethod
+
 import numpy
 
 from presso.core.eventqueue import EventQueue
@@ -7,7 +9,7 @@ from presso.core.transaction import Transaction
 from presso.core.util import LOG
 
 
-class AbstractDataEvent:
+class AbstractDataEvent(ABC):
     def __init__(self, datapath, historyfile, config):
         self._datapath = datapath
         self._historyfile = historyfile
@@ -50,8 +52,10 @@ class AbstractDataEvent:
             await event_queue.put(self, data)
         event_queue.remove(self)
 
+    @abstractmethod
     def _init(self):
         raise NotImplementedError
 
+    @abstractmethod
     async def _iter(self):
         raise NotImplementedError

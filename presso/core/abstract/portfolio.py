@@ -1,9 +1,11 @@
 import asyncio
 
+from abc import ABC, abstractmethod
+
 from presso.core.util.constants import STATUS
 
 
-class AbstractPortfolio:
+class AbstractPortfolio(ABC):
     def __init__(self, connectors, statistics, config):
         self._connectors = connectors
         self._statistics = statistics
@@ -29,5 +31,6 @@ class AbstractPortfolio:
         for _, stat in self._statistics.items():
             stat.finish()
 
+    @abstractmethod
     def _init(self):
         raise NotImplementedError

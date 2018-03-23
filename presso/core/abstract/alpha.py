@@ -1,4 +1,7 @@
-class AbstractAlpha:
+from abc import ABC, abstractmethod
+
+
+class AbstractAlpha(ABC):
     def __init__(self, name, portfolio, main_dataevent, dataevents, config):
         self.name = name
         self._main_dataevent = main_dataevent
@@ -12,15 +15,17 @@ class AbstractAlpha:
             raise NotImplementedError('No handler function defined in portfolio')
         self._init()
 
-    def _init(self):
-        raise NotImplementedError
-
-    async def _calcSignal(self, data):
-        raise NotImplementedError
-
     async def onData(self, transaction, data):
         signal = await self._calcSignal(data)
         if signal > 1 or signal < -1:
             raise ValueError('Signal value should between +/-1')
         transaction.signal = signal
         self._callback(transaction)
+
+    @abstractmethod
+    def _init(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    async def _calcSignal(self, data):
+        raise NotImplementedError

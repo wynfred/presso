@@ -2,9 +2,10 @@
 import asyncio
 import logging
 import sys
-import toml
 
 from pydoc import locate
+
+import toml
 
 from presso.core import util
 from presso.core.eventqueue import EventQueue
