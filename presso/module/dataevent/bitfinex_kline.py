@@ -22,7 +22,8 @@ class BitfinexKlineDataEvent(AbstractDataEvent):
             self.__iter_function = self.__history
 
     async def _iter(self):
-        await self.__iter_function()
+        async for data in self.__iter_function():
+            yield data
 
     async def __history(self):
         while self.__now <= self.__end_time:

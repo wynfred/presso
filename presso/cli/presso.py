@@ -83,8 +83,5 @@ def run():
             print('Event Loop Stopped')
             util.LOG.info('Event Loop Stopped')
         else:
-            util.LOG.error(error)
+            util.LOG.exception(error)
     portfolio.runStatistics()
-
-if __name__ == '__main__':
-    run()

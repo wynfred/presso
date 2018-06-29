@@ -36,16 +36,18 @@ Transactions are records that store information through the pipeline. A Transact
 EventQueue contains a priority queue and a locking system. DataEvents put events into the EventQueue and wait for its event to be consumed. There will be only one event in EventQueue for every DataEvent, so that all history events are triggered by time.
 
 #### Manifest
-Manifest is a JSON file that defines the structure of a Portfolio and dependencies of modules.
+Manifest is a TOML file that defines the structure of a Portfolio and dependencies of modules.
+
+## Install and Run
+    python3.6 setup.py install
+    presso example/manifest.toml
+    # Press ENTER to stop DataEvents and run Statistics
+    # Check presso.log for logs
 
 ## Dependencies
     python3.6
     aiohttp
     numpy
-
-## Run
-    ./presso_run manifest.json
-    # Press ENTER to stop DataEvents and run Statistics
 
 ## Examples
 
