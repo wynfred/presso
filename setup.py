@@ -12,7 +12,11 @@ setup(
                                     'docs')),
     entry_points={
         'console_scripts': [
-            'presso = presso.cli.presso:run',
+            'presso = presso.cli.presso:main',
         ]
     },
+    python_requires='>=3.6',
+    install_requires=['aiohttp',
+                      'numpy',
+                      'toml']
 )

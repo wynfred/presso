@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+import argparse
 import asyncio
 import logging
 import sys
@@ -11,11 +11,8 @@ from presso.core import util
 from presso.core.eventqueue import EventQueue
 
 
-def run():
-    if len(sys.argv) != 2:
-        print('Usage: presso_run manifest.toml')
-        exit()
-    manifest = toml.load(open(sys.argv[1]))
+def run(args):
+    manifest = toml.load(args.manifest)
     # Setup logger
     log_format = '[%(levelname)s|%(module)s|%(asctime)s] %(message)s'
     log_level = getattr(logging, manifest['log']['level'].upper(), None)
@@ -85,3 +82,16 @@ def run():
         else:
             util.LOG.exception(error)
     portfolio.runStatistics()
+
+def main():
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(dest='action')
+    subparsers.required = True
+
+    run_parser = subparsers.add_parser('run', help='run a portfolio')
+    run_parser.add_argument('manifest', type=open, help='TOML manifest file')
+    run_parser.set_defaults(func=run)
+
+    create_parser = subparsers.add_parser('create', help='TODO: create components')
+    args = parser.parse_args()
+    args.func(args)

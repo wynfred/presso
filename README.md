@@ -39,15 +39,19 @@ EventQueue contains a priority queue and a locking system. DataEvents put events
 Manifest is a TOML file that defines the structure of a Portfolio and dependencies of modules.
 
 ## Install and Run
-    python3.6 setup.py install
-    presso example/manifest.toml
+    git clone https://github.com/wynfred/presso.git
+    cd presso
+    sudo pip3 install .
+    presso run example/manifest.toml
     # Press ENTER to stop DataEvents and run Statistics
     # Check presso.log for logs
 
 ## Dependencies
     python3.6
     aiohttp
+    ccxt
     numpy
+    toml
 
 ## Examples
 
